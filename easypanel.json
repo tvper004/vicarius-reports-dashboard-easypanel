@@ -1,0 +1,83 @@
+{
+  "name": "vAnalyzer - Vicarius Reports Dashboard",
+  "description": "Sistema de reportes de vulnerabilidades de Vicarius adaptado para EasyPanel",
+  "version": "1.0.0",
+  "type": "docker-compose",
+  "compose_file": "docker-compose-easypanel.yml",
+  "environment_file": ".env",
+  "services": {
+    "postgres": {
+      "name": "Base de datos PostgreSQL",
+      "description": "Base de datos principal para almacenar reportes de vulnerabilidades",
+      "port": 5432,
+      "internal": true
+    },
+    "app": {
+      "name": "Aplicación Principal",
+      "description": "Scripts Python para sincronizar datos de vRx",
+      "port": 8000,
+      "internal": true,
+      "health_check": {
+        "command": "python /usr/src/app/health_check.py",
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3
+      }
+    },
+    "webapp": {
+      "name": "Dashboard Web",
+      "description": "Interfaz web Django para gestión de reportes",
+      "port": 8001,
+      "public": true,
+      "path": "/"
+    },
+    "metabase": {
+      "name": "Metabase BI",
+      "description": "Dashboard de Business Intelligence para análisis de datos",
+      "port": 3000,
+      "public": true,
+      "path": "/"
+    }
+  },
+  "volumes": {
+    "postgres_data": {
+      "type": "local",
+      "description": "Datos de la base de datos PostgreSQL"
+    },
+    "webapp_data": {
+      "type": "local", 
+      "description": "Datos de la aplicación web Django"
+    },
+    "metabase_data": {
+      "type": "local",
+      "description": "Datos de Metabase"
+    }
+  },
+  "networks": {
+    "vicarius-network": {
+      "type": "bridge",
+      "description": "Red interna para comunicación entre servicios"
+    }
+  },
+  "requirements": {
+    "min_memory": "2GB",
+    "recommended_memory": "4GB",
+    "min_cpu": "2 cores",
+    "recommended_cpu": "4 cores",
+    "min_disk": "20GB",
+    "recommended_disk": "50GB"
+  },
+  "setup_instructions": [
+    "1. Configure las variables de entorno en el archivo .env",
+    "2. Obtenga su API_KEY desde el dashboard de Vicarius",
+    "3. Configure su DASHBOARD_ID (primera parte de su URL)",
+    "4. Establezca una contraseña segura para PostgreSQL",
+    "5. Ejecute el script de despliegue"
+  ],
+  "troubleshooting": {
+    "logs": "docker-compose -f docker-compose-easypanel.yml logs -f",
+    "restart": "docker-compose -f docker-compose-easypanel.yml restart",
+    "stop": "docker-compose -f docker-compose-easypanel.yml down",
+    "update": "git pull && docker-compose -f docker-compose-easypanel.yml up -d --build"
+  }
+}

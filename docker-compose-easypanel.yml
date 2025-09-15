@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:16.0
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
+      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - vicarius-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vrx_user} -d ${POSTGRES_DB:-vrx_reports}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Aplicación principal de reportes
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Variables de conexión a la base de datos
+      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
+      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      
+      # Variables de Vicarius API
+      API_KEY: ${API_KEY}
+      DASHBOARD_ID: ${DASHBOARD_ID}
+      
+      # Configuración opcional
+      OPTIONAL_TOOLS: ${OPTIONAL_TOOLS:-}
+    volumes:
+      - ./app/reports:/usr/src/app/reports
+      - ./app/logs:/var/log
+      - ./app/scripts:/usr/src/app/scripts
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - vicarius-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Dashboard web opcional (Django)
+  webapp:
+    build:
+      context: ./webapp/mgntDash
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
+      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    volumes:
+      - webapp_data:/app/db.sqlite3
+    networks:
+      - vicarius-network
+    ports:
+      - "8001:8000"
+
+  # Metabase (Dashboard de BI opcional)
+  metabase:
+    image: metabase/metabase:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${POSTGRES_DB:-vrx_reports}
+      MB_DB_PORT: 5432
+      MB_DB_USER: ${POSTGRES_USER:-vrx_user}
+      MB_DB_PASS: ${POSTGRES_PASSWORD:-vrx_password}
+      MB_DB_HOST: postgres
+      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-your-secret-key-here}
+    volumes:
+      - metabase_data:/metabase-data
+    networks:
+      - vicarius-network
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+    driver: local
+  webapp_data:
+    driver: local
+  metabase_data:
+    driver: local
+
+networks:
+  vicarius-network:
+    driver: bridge

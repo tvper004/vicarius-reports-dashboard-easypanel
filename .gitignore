@@ -1,0 +1,101 @@
+# Archivos de configuración sensibles
+.env
+*.env
+!env.example
+
+# Logs
+*.log
+logs/
+app/logs/
+
+# Datos de la base de datos
+*.db
+*.sqlite3
+postgres-data/
+postgres_data/
+
+# Volúmenes de Docker
+volumes/
+data/
+
+# Archivos de backup
+backups/
+*.backup
+*.bak
+
+# Archivos temporales
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de Docker
+.dockerignore
+
+# Archivos de certificados
+*.crt
+*.key
+*.pem
+certs/
+
+# Archivos de estado
+state.json
+app/scripts/state.json
+
+# Reportes generados
+app/reports/
+reports/
+
+# Archivos de Metabase
+metabase-data/
+metabase_data/
+
+# Archivos de Django
+webapp/mgntDash/db.sqlite3
+webapp/mgntDash/__pycache__/
+webapp/mgntDash/mgntDash/__pycache__/
+webapp/mgntDash/myapp/__pycache__/
+webapp/mgntDash/myapp/migrations/
+
+# Archivos de configuración local
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Archivos de sistema
+*.pid
+*.seed
+*.pid.lock
