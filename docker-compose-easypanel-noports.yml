@@ -12,7 +12,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./appdb/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+      - ./appdb/init-postgres-v2.sql:/docker-entrypoint-initdb.d/init-postgres.sql
       - /etc/localtime:/etc/localtime:ro
     networks:
       - vicarius-network
@@ -20,7 +20,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vrx_user} -d ${POSTGRES_DB:-vrx_reports}"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 60s
 
   # Aplicación principal de reportes
   app:
@@ -52,9 +53,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       - vicarius-network
-    # Puerto opcional - comentar si hay conflictos en EasyPanel
-    ports:
-      - "8009:8008"
+    # Sin puertos expuestos - EasyPanel manejará el acceso
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8008/health', timeout=5)"]
       interval: 30s
@@ -62,7 +61,7 @@ services:
       retries: 3
       start_period: 60s
 
-  # Dashboard web opcional (Django)
+  # Dashboard web opcional (Django) - Solo si está habilitado
   webapp:
     build:
       context: ./webapp/mgntDash
@@ -81,11 +80,11 @@ services:
       - webapp_data:/app/db.sqlite3
     networks:
       - vicarius-network
-    # Puerto opcional - comentar si hay conflictos en EasyPanel
-    ports:
-      - "8002:8000"
+    # Sin puertos expuestos - EasyPanel manejará el acceso
+    profiles:
+      - webapp
 
-  # Metabase (Dashboard de BI opcional)
+  # Metabase (Dashboard de BI opcional) - Solo si está habilitado
   metabase:
     image: metabase/metabase:latest
     restart: unless-stopped
@@ -97,16 +96,16 @@ services:
       MB_DB_DBNAME: ${POSTGRES_DB:-vrx_reports}
       MB_DB_PORT: 5432
       MB_DB_USER: ${POSTGRES_USER:-vrx_user}
-      MB_DB_PASS: ${POSTGRES_PASSWORD:-vrx_password}
+      MB_DB_PASS: ${POSTGRES_PASSWORD:-K67lkk7580*98095102*}
       MB_DB_HOST: postgres
       MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-bf9k_d8_G_vPz_qN_s5bT_wE4rY2uI}
     volumes:
       - metabase_data:/metabase-data
     networks:
       - vicarius-network
-    # Puerto opcional - comentar si hay conflictos en EasyPanel
-    ports:
-      - "3002:3000"
+    # Sin puertos expuestos - EasyPanel manejará el acceso
+    profiles:
+      - metabase
 
 volumes:
   postgres_data:
