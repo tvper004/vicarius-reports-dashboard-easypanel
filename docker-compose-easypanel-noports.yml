@@ -41,11 +41,11 @@ services:
       POSTGRES_PORT: 5432
       
       # Variables de Vicarius API
-      API_KEY: ${API_KEY}
-      DASHBOARD_ID: ${DASHBOARD_ID}
+      API_KEY: ${API_KEY:-your_api_key_here}
+      DASHBOARD_ID: ${DASHBOARD_ID:-your_dashboard_id_here}
       
       # Configuración opcional
-      OPTIONAL_TOOLS: ${OPTIONAL_TOOLS:-}
+      OPTIONAL_TOOLS: ${OPTIONAL_TOOLS:-metabase}
     volumes:
       - ./app/reports:/usr/src/app/reports
       - ./app/logs:/var/log

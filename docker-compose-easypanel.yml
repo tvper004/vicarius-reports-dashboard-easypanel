@@ -40,8 +40,8 @@ services:
       POSTGRES_PORT: 5432
       
       # Variables de Vicarius API
-      API_KEY: ${API_KEY}
-      DASHBOARD_ID: ${DASHBOARD_ID}
+      API_KEY: ${API_KEY:-your_api_key_here}
+      DASHBOARD_ID: ${DASHBOARD_ID:-your_dashboard_id_here}
       
       # Configuración opcional
       OPTIONAL_TOOLS: ${OPTIONAL_TOOLS:-}
@@ -97,7 +97,7 @@ services:
       MB_DB_DBNAME: ${POSTGRES_DB:-vrx_reports}
       MB_DB_PORT: 5432
       MB_DB_USER: ${POSTGRES_USER:-vrx_user}
-      MB_DB_PASS: ${POSTGRES_PASSWORD:-vrx_password}
+      MB_DB_PASS: ${POSTGRES_PASSWORD:-K67lkk7580*98095102*}
       MB_DB_HOST: postgres
       MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-bf9k_d8_G_vPz_qN_s5bT_wE4rY2uI}
     volumes:
