@@ -1,16 +1,42 @@
 #!/bin/sh
 # Run your script
 
+# Ejecutar script de inicialización
+echo "🚀 Ejecutando inicialización..."
+/usr/src/app/scripts/init-app.sh
+
+# Configurar credenciales
+echo "🔐 Configurando credenciales..."
+/usr/src/app/scripts/setup-credentials.sh
+
 # Source and destination file paths
 SRC_FILE="/usr/src/app/scripts/state.json"
 DEST_FILE="/usr/src/app/reports/state.json"
 
 mkdir -p /usr/src/app/reports
+mkdir -p /var/log
 
 # Check if the destination file does not exist
 if [ ! -f "$DEST_FILE" ]; then
     # If it does not exist, copy the source file to the destination
     cp "$SRC_FILE" "$DEST_FILE"
+    echo "📄 state.json copiado a reports/"
+fi
+
+# Verificar que las credenciales estén configuradas
+if [ -z "$API_KEY" ] || [ -z "$DASHBOARD_ID" ]; then
+    echo "❌ ERROR: Las credenciales de la API no están configuradas"
+    echo "📝 Configura las siguientes variables de entorno:"
+    echo "   - API_KEY: Tu clave de API de Vicarius"
+    echo "   - DASHBOARD_ID: Tu ID de dashboard de Vicarius"
+    echo ""
+    echo "💡 Ejemplo de configuración en docker-compose:"
+    echo "   environment:"
+    echo "     - API_KEY=tu_api_key_aqui"
+    echo "     - DASHBOARD_ID=tu_dashboard_id_aqui"
+    echo ""
+    echo "⏳ Esperando 60 segundos antes de continuar..."
+    sleep 60
 fi
 
 sleep 20
