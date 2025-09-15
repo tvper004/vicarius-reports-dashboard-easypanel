@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Base de datos PostgreSQL
   postgres:
@@ -50,8 +48,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       - vicarius-network
+    ports:
+      - "8008:8008"
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8008/health', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -93,13 +93,13 @@ services:
       MB_DB_USER: ${POSTGRES_USER:-vrx_user}
       MB_DB_PASS: ${POSTGRES_PASSWORD:-vrx_password}
       MB_DB_HOST: postgres
-      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-your-secret-key-here}
+      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-bf9k_d8_G_vPz_qN_s5bT_wE4rY2uI}
     volumes:
       - metabase_data:/metabase-data
     networks:
       - vicarius-network
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
 volumes:
   postgres_data:
