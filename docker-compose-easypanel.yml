@@ -51,7 +51,7 @@ services:
     networks:
       - vicarius-network
     ports:
-      - "8008:8008"
+      - "8009:8008"
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8008/health', timeout=5)"]
       interval: 30s
@@ -79,7 +79,7 @@ services:
     networks:
       - vicarius-network
     ports:
-      - "8001:8000"
+      - "8002:8000"
 
   # Metabase (Dashboard de BI opcional)
   metabase:
@@ -101,7 +101,7 @@ services:
     networks:
       - vicarius-network
     ports:
-      - "3001:3000"
+      - "3002:3000"
 
 volumes:
   postgres_data:
