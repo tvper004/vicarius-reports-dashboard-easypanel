@@ -14,6 +14,15 @@ RUN apt-get -y install postgresql-client-16
 
 COPY . .
 
+# Dar permisos de ejecución a los scripts
+RUN chmod +x /usr/src/app/scripts/init-app.sh
+RUN chmod +x /usr/src/app/scripts/setup-credentials.sh
+RUN chmod +x /usr/src/app/scripts/refreshTables.sh
+RUN chmod +x /usr/src/app/scripts/activeVulnsSync.sh
+RUN chmod +x /usr/src/app/scripts/difTables.sh
+RUN chmod +x /usr/src/app/scripts/test-permissions.sh
+RUN chmod +x /usr/src/app/scripts/diagnose.sh
+
 # Schedule your script using cron
 #COPY crontab /etc/cron.d/my-crontab
 #RUN chmod 0644 /etc/cron.d/my-crontab
@@ -21,8 +30,6 @@ COPY . .
 #COPY initcron /etc/cron.d/initcron
 #RUN chmod 0644 /etc/cron.d/initcron
 #RUN crontab /etc/cron.d/initcron
-
-
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
