@@ -1,6 +1,14 @@
 #!/bin/sh
 # Run your script
 
+# Ejecutar diagnóstico completo
+echo "🔍 Ejecutando diagnóstico completo..."
+/usr/src/app/scripts/diagnose.sh
+
+# Verificar y corregir permisos de scripts
+echo "🔍 Verificando permisos de scripts..."
+chmod +x /usr/src/app/scripts/*.sh
+
 # Ejecutar script de inicialización
 echo "🚀 Ejecutando inicialización..."
 /usr/src/app/scripts/init-app.sh
