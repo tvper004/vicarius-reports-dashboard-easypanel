@@ -1,21 +1,20 @@
 services:
-  # Base de datos PostgreSQL
+  # Base de datos PostgreSQL (configuración simplificada)
   postgres:
     image: postgres:16.0
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
-      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
-      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=trust"
+      POSTGRES_DB: vrx_reports
+      POSTGRES_USER: vrx_user
+      POSTGRES_PASSWORD: K67lkk7580*98095102*
+      POSTGRES_INITDB_ARGS: "--auth-host=md5 --auth-local=trust"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./appdb/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
       - /etc/localtime:/etc/localtime:ro
     networks:
       - vicarius-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vrx_user} -d ${POSTGRES_DB:-vrx_reports}"]
+      test: ["CMD-SHELL", "pg_isready -U vrx_user -d vrx_reports"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -31,18 +30,18 @@ services:
         condition: service_healthy
     environment:
       # Variables de conexión a la base de datos
-      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
-      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
+      POSTGRES_DB: vrx_reports
+      POSTGRES_USER: vrx_user
+      POSTGRES_PASSWORD: K67lkk7580*98095102*
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       
       # Variables de Vicarius API
-      API_KEY: ${API_KEY}
-      DASHBOARD_ID: ${DASHBOARD_ID}
+      API_KEY: NEoLXlK8jpFMsMIjTphpTp9OZejI7veKJ6SRiHcv83Z1Ee5k1KY0QxXV8xv5nqw3gTWlSYiY7d6gHJcYFiZgZzKmKZpEwEkiRg70PciohRBjPTVSsdY0dkPsHFj6YKIrEfQ5sQmnBz8BGKu37JIpMoOoYah5gZmZuzqFa9CzpkUn3PW988Z5qPFPGTfgutVHMYzVrykFIGkUldvIpUWvKuF2wOYiBAsQPtpFRubZ8E86AOu3gc6qg6JaLx2481rD
+      DASHBOARD_ID: https://unicon.vicarius.cloud
       
       # Configuración opcional
-      OPTIONAL_TOOLS: ${OPTIONAL_TOOLS:-}
+      OPTIONAL_TOOLS: metabase,webapp
     volumes:
       - ./app/reports:/usr/src/app/reports
       - ./app/logs:/var/log
@@ -69,9 +68,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-vrx_reports}
-      POSTGRES_USER: ${POSTGRES_USER:-vrx_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrx_password}
+      POSTGRES_DB: vrx_reports
+      POSTGRES_USER: vrx_user
+      POSTGRES_PASSWORD: K67lkk7580*98095102*
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
     volumes:
@@ -90,12 +89,12 @@ services:
         condition: service_healthy
     environment:
       MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${POSTGRES_DB:-vrx_reports}
+      MB_DB_DBNAME: vrx_reports
       MB_DB_PORT: 5432
-      MB_DB_USER: ${POSTGRES_USER:-vrx_user}
-      MB_DB_PASS: ${POSTGRES_PASSWORD:-vrx_password}
+      MB_DB_USER: vrx_user
+      MB_DB_PASS: K67lkk7580*98095102*
       MB_DB_HOST: postgres
-      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-bf9k_d8_G_vPz_qN_s5bT_wE4rY2uI}
+      MB_ENCRYPTION_SECRET_KEY: bf9k_d8_G_vPz_qN_s5bT_wE4rY2uI
     volumes:
       - metabase_data:/metabase-data
     networks:
